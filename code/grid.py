@@ -1,5 +1,6 @@
 from typing import Tuple, List
 import random
+import numpy as np
 
 
 class Grid:
@@ -19,6 +20,7 @@ class Grid:
         self.max_x = min_x + step_x
         self.max_y = min_y + step_y
         self.index = index
+        self.linear_index = -1
 
     def in_cell(self, p: Tuple[float, float]):
         if self.min_x <= p[0] <= self.max_x and self.min_y <= p[1] <= self.max_y:
@@ -76,9 +78,13 @@ class GridMap:
         for i in range(n):
             self.map.append(list())
             for j in range(n):
-                self.map[i].append(Grid(min_x + step_x * i, min_y + step_y * j, step_x, step_y, (i, j)))
+                grid = Grid(min_x + step_x * i, min_y + step_y * j, step_x, step_y, (i, j))
+                grid.linear_index = i * n + j
+                self.map[i].append(grid)
         self._list_map = [grid for row in self.map for grid in row]
         self._adjacent_cache = {}
+        self._adjacent_linear_cache = {}
+        self._candidate_linear_cache = {}
         self._all_transition_cache = None
         self._normal_transition_cache = None
 
@@ -116,11 +122,32 @@ class GridMap:
         self._adjacent_cache[g.index] = adjacent_index_new
         return adjacent_index_new
 
+    def get_adjacent_linear(self, g: Grid):
+        cached = self._adjacent_linear_cache.get(g.linear_index)
+        if cached is not None:
+            return cached
+
+        linear_indices = tuple(self.map[i][j].linear_index for i, j in self.get_adjacent(g))
+        self._adjacent_linear_cache[g.linear_index] = linear_indices
+        return linear_indices
+
+    def get_candidate_linear(self, g: Grid):
+        cached = self._candidate_linear_cache.get(g.linear_index)
+        if cached is not None:
+            return cached
+
+        candidates = np.asarray(self.get_adjacent_linear(g) + (g.linear_index,), dtype=np.int32)
+        self._candidate_linear_cache[g.linear_index] = candidates
+        return candidates
+
     def is_adjacent_grids(self, g1: Grid, g2: Grid):
         return True if g2.index in self.get_adjacent(g1) else False
 
     def get_list_map(self):
         return self._list_map
+
+    def get_grid_by_linear(self, index: int):
+        return self._list_map[index]
 
     def get_all_transition(self):
         if self._all_transition_cache is not None:

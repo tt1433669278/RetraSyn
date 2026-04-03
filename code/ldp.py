@@ -29,6 +29,15 @@ class OUE:
         index = self.map_func(data)
         self._aggregate(index)
 
+    def privatise_index(self, index):
+        self._aggregate(index)
+
+    def aggregate_indices(self, indices):
+        if len(indices) == 0:
+            return
+        self.aggregated_data += np.bincount(indices, minlength=self.d)
+        self.n += len(indices)
+
     def adjust(self):
         # If y=0, Prob(y'=1)=q, Prob(y'=0)=1-q
         tmp_perturbed_1 = np.copy(self.aggregated_data)
@@ -43,8 +52,4 @@ class OUE:
 
     @property
     def non_negative_data(self):
-        data = np.zeros_like(self.adjusted_data)
-        for i in range(len(self.adjusted_data)):
-            if self.adjusted_data[i] > 0:
-                data[i] = self.adjusted_data[i]
-        return data
+        return np.maximum(self.adjusted_data, 0)

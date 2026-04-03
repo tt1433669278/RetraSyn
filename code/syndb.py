@@ -22,38 +22,24 @@ class SynDB:
         self.t += 1
         for traj in self.current_data:
             prev_grid = traj[-1][0]
-            candidates = grid_map.get_adjacent(prev_grid)
-            # add self-transition
-            candidates.append(prev_grid.index)
-            candidate_prob = np.zeros(len(candidates) + 1)
-            row = utils.grid_index_map_func(prev_grid, grid_map)
-
-            for k, (i, j) in enumerate(candidates):
-                col = utils.grid_index_map_func(grid_map.map[i][j], grid_map)
-                prob = markov_mat[row][col]
-
-                if np.isnan(prob):
-                    candidate_prob[k] = 0
-                else:
-                    candidate_prob[k] = prob
+            row = prev_grid.linear_index
+            candidates = grid_map.get_candidate_linear(prev_grid)
+            candidate_prob = np.nan_to_num(markov_mat[row, candidates].copy(), nan=0.0)
 
             # Quit probability
-            col = -1
-            prob = markov_mat[row][col]
-            prob *= min(1.0, len(traj) / avg_len)
-            candidate_prob[-1] = prob
+            quit_prob = markov_mat[row, -1] * min(1.0, len(traj) / avg_len)
+            candidate_prob = np.append(candidate_prob, quit_prob)
 
             if candidate_prob.sum() < 0.00001:
                 traj.append((prev_grid, self.t))
             else:
                 candidate_prob = candidate_prob / candidate_prob.sum()
-                sample_id = np.random.choice(np.arange(len(candidate_prob)), p=candidate_prob)
+                sample_id = np.random.choice(len(candidate_prob), p=candidate_prob)
 
                 if sample_id == len(candidate_prob) - 1:
                     # Quitting
                     continue
-                i, j = candidates[sample_id]
-                traj.append((grid_map.map[i][j], self.t))
+                traj.append((grid_map.get_grid_by_linear(int(candidates[sample_id])), self.t))
 
         # Move terminated trajectories to history data
         new_curr_data = []
@@ -73,43 +59,34 @@ class SynDB:
         self.t += 1
         for traj in self.current_data:
             prev_grid = traj[-1][0]
-            candidates = grid_map.get_adjacent(prev_grid)
-            # add self-transition
-            candidates.append(prev_grid.index)
-            candidate_prob = np.zeros(len(candidates))
-            row = utils.grid_index_map_func(prev_grid, grid_map)
-
-            for k, (i, j) in enumerate(candidates):
-                col = utils.grid_index_map_func(grid_map.map[i][j], grid_map)
-                prob = markov_mat[row][col]
-
-                if np.isnan(prob):
-                    candidate_prob[k] = 0
-                else:
-                    candidate_prob[k] = prob
+            row = prev_grid.linear_index
+            candidates = grid_map.get_candidate_linear(prev_grid)
+            candidate_prob = np.nan_to_num(markov_mat[row, candidates].copy(), nan=0.0)
 
             if candidate_prob.sum() < 0.00001:
-                sample_id = np.random.choice(np.arange(len(candidates)))
-                i, j = candidates[sample_id]
-                traj.append((grid_map.map[i][j], self.t))
+                sample_id = np.random.choice(len(candidates))
+                traj.append((grid_map.get_grid_by_linear(int(candidates[sample_id])), self.t))
             else:
                 candidate_prob = candidate_prob / candidate_prob.sum()
-                sample_id = np.random.choice(np.arange(len(candidate_prob)), p=candidate_prob)
-
-                i, j = candidates[sample_id]
-                traj.append((grid_map.map[i][j], self.t))
+                sample_id = np.random.choice(len(candidate_prob), p=candidate_prob)
+                traj.append((grid_map.get_grid_by_linear(int(candidates[sample_id])), self.t))
 
     def adjust_data_size(self,
                          markov_mat: np.ndarray,
                          target_n: int,
                          grid_map: GridMap,
                          quit_distribution: np.ndarray):
-        while self.n < target_n:
-            # Add new trajectories
-            # Get entering distribution
-            prob = markov_mat[-1] / markov_mat[-1].sum()
-            sample_id = np.random.choice(np.arange(grid_map.size), p=prob[:-1])
-            self.current_data.append([(utils.grid_index_inv_func(sample_id, grid_map), self.t)])
+        if self.n < target_n:
+            missing = target_n - self.n
+            enter_prob = markov_mat[-1, :-1]
+            total_prob = enter_prob.sum()
+            if total_prob < 1e-8:
+                sampled = np.random.choice(grid_map.size, size=missing)
+            else:
+                sampled = np.random.choice(grid_map.size, size=missing, p=enter_prob / total_prob)
+            self.current_data.extend(
+                [[(grid_map.get_grid_by_linear(int(sample_id)), self.t)] for sample_id in sampled]
+            )
 
         if self.n > target_n:
             if np.sum(quit_distribution) < 1e-5:
@@ -124,27 +101,27 @@ class SynDB:
                 # Sampling based on quitting distribution
                 prob = np.zeros(self.n)
                 for i in range(self.n):
-                    row = utils.grid_index_map_func(self.current_data[i][-2][0], grid_map)
+                    row = self.current_data[i][-2][0].linear_index
                     prob[i] = quit_distribution[row]
                 prob += 1e-8
                 prob = prob / prob.sum()
-                sample_id = np.random.choice(np.arange(self.n), size=self.n - target_n, replace=False, p=prob)
-                non_sample_id = list(set(np.arange(self.n)) - set(sample_id))
+                sample_id = np.random.choice(self.n, size=self.n - target_n, replace=False, p=prob)
+                keep_mask = np.ones(self.n, dtype=bool)
+                keep_mask[sample_id] = False
                 new_history_add = [self.current_data[i] for i in sample_id]
 
                 for idx, traj in enumerate(new_history_add):
                     new_history_add[idx] = traj[:-1]
                 self.history_data.extend(new_history_add)
-                new_curr_data = [self.current_data[i] for i in non_sample_id]
+                new_curr_data = [self.current_data[i] for i in np.flatnonzero(keep_mask)]
                 self.current_data = new_curr_data
 
     def random_initialize(self,
                           target_n: int,
                           grid_map: GridMap):
         self.t = 0
-        while self.n < target_n:
-            sample_id = np.random.choice(np.arange(grid_map.size))
-            self.current_data.append([(utils.grid_index_inv_func(sample_id, grid_map), self.t)])
+        sampled = np.random.choice(grid_map.size, size=target_n)
+        self.current_data = [[(grid_map.get_grid_by_linear(int(sample_id)), self.t)] for sample_id in sampled]
 
     @property
     def n(self):

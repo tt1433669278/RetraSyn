@@ -77,6 +77,8 @@ def grid_index_map_func(g: Grid, grid_map: GridMap):
     Map a grid to its index: (i, j) => int
     return: i*|column|+j
     """
+    if getattr(g, 'linear_index', -1) >= 0:
+        return g.linear_index
     i, j = g.index
     return i * len(grid_map.map[0]) + j
 
