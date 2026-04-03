@@ -397,10 +397,10 @@ timestamps = {
 }
 
 logger.info('Reading dataset...')
-with lzma.open(f'../data/{args.dataset}_transition.xz', 'rb') as f:
+with lzma.open(f'./data/{args.dataset}_transition.xz', 'rb') as f:
     dataset = pickle.load(f)[:timestamps[args.dataset]]
 
-stats = utils.t_dataset_stats(dataset, f'../data/{args.dataset}_stats.json')
+stats = utils.t_dataset_stats(dataset, f'./data/{args.dataset}_stats.json')
 grid_map = GridMap(args.grid_num,
                    stats['min_x'],
                    stats['min_y'],
