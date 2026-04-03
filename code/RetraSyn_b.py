@@ -406,7 +406,7 @@ grid_map = GridMap(args.grid_num,
                    stats['min_y'],
                    stats['max_x'],
                    stats['max_y'])
-#qqqqq
+
 logger.info('Spatial decomposition...')
 if args.multiprocessing:
     def decomp_multi(xy_l):
