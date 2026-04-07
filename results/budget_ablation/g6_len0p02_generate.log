@@ -1,0 +1,19 @@
+Warning: logging configuration file is not found in logger\logger_config.json.
+
+INFO:RetraSyn:Namespace(epsilon=1.0, grid_num=6, w=20, method='retrasyn_pst', dataset='tdrive', multiprocessing=False, phi=20, compare_methods='', pst_profile='balanced', pst_report_rate=2.25, pst_explore_rate=0.2, pst_split_sigma=1.5, pst_confirm_gain=0.03, pst_length_eps_frac=0.02, pst_marginal_eps_frac=0.2, pst_explore_budget_ratio=0.6, pst_momentum_min_candidates=4, pst_consistency_mix=0.55, pst_length_max=96)
+INFO:RetraSyn:Reading dataset...
+INFO:RetraSyn:Spatial decomposition...
+INFO:RetraSyn:RetraSyn-PST...
+INFO:RetraSyn:100 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:200 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:300 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:400 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:500 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:600 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:700 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:800 timestamps processed, PST nodes=38, confirmed_nodes=36, broadcasted_nodes=38, new_nodes=0
+INFO:RetraSyn:Runtime breakdown:
+INFO:RetraSyn:  spatial_decomposition: 14.021s
+INFO:RetraSyn:  pst_update: 7.591s
+INFO:RetraSyn:  trajectory_synthesis: 63.692s
+INFO:RetraSyn:  write_file: 3.684s

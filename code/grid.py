@@ -85,6 +85,7 @@ class GridMap:
         self._adjacent_cache = {}
         self._adjacent_linear_cache = {}
         self._candidate_linear_cache = {}
+        self._candidate_linear_radius_cache = {}
         self._all_transition_cache = None
         self._normal_transition_cache = None
 
@@ -131,17 +132,36 @@ class GridMap:
         self._adjacent_linear_cache[g.linear_index] = linear_indices
         return linear_indices
 
-    def get_candidate_linear(self, g: Grid):
-        cached = self._candidate_linear_cache.get(g.linear_index)
+    def get_candidate_linear(self, g: Grid, radius: int = 1):
+        radius = max(1, int(radius))
+        if radius == 1:
+            cached = self._candidate_linear_cache.get(g.linear_index)
+            if cached is not None:
+                return cached
+
+            candidates = np.asarray(self.get_adjacent_linear(g) + (g.linear_index,), dtype=np.int32)
+            self._candidate_linear_cache[g.linear_index] = candidates
+            return candidates
+
+        cache_key = (g.linear_index, radius)
+        cached = self._candidate_linear_radius_cache.get(cache_key)
         if cached is not None:
             return cached
 
-        candidates = np.asarray(self.get_adjacent_linear(g) + (g.linear_index,), dtype=np.int32)
-        self._candidate_linear_cache[g.linear_index] = candidates
+        i0, j0 = g.index
+        candidates = []
+        for i in range(max(0, i0 - radius), min(self.n - 1, i0 + radius) + 1):
+            for j in range(max(0, j0 - radius), min(self.n - 1, j0 + radius) + 1):
+                candidates.append(self.map[i][j].linear_index)
+        candidates = np.asarray(candidates, dtype=np.int32)
+        self._candidate_linear_radius_cache[cache_key] = candidates
         return candidates
 
     def is_adjacent_grids(self, g1: Grid, g2: Grid):
         return True if g2.index in self.get_adjacent(g1) else False
+
+    def chebyshev_distance(self, g1: Grid, g2: Grid):
+        return max(abs(g1.index[0] - g2.index[0]), abs(g1.index[1] - g2.index[1]))
 
     def get_list_map(self):
         return self._list_map

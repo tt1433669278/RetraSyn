@@ -1,0 +1,46 @@
+[
+  {
+    "pst_length_eps_frac": 0.02,
+    "Density Error": 0.11652331184160537,
+    "Transition Error": 0.36746575653382096,
+    "Spatial-Temporal Query Error": 0.4616665752190884,
+    "Pattern F1 Error": 0.4793,
+    "Kendall-tau Coefficient": 0.7238095238095238,
+    "Length Error": 0.14772281075083182,
+    "Trip Error": 0.26133431402387547,
+    "Hotspot NDCG": 0.7346972605355601
+  },
+  {
+    "pst_length_eps_frac": 0.05,
+    "Density Error": 0.11408258063989563,
+    "Transition Error": 0.3668746512972034,
+    "Spatial-Temporal Query Error": 0.4384267194251386,
+    "Pattern F1 Error": 0.4878,
+    "Kendall-tau Coefficient": 0.7841269841269841,
+    "Length Error": 0.14513818284229496,
+    "Trip Error": 0.2540656339111612,
+    "Hotspot NDCG": 0.7742320265347246
+  },
+  {
+    "pst_length_eps_frac": 0.1,
+    "Density Error": 0.1147391094307288,
+    "Transition Error": 0.3750438931979292,
+    "Spatial-Temporal Query Error": 0.4378079421119908,
+    "Pattern F1 Error": 0.4864,
+    "Kendall-tau Coefficient": 0.7904761904761904,
+    "Length Error": 0.1414237877610085,
+    "Trip Error": 0.2542949473427436,
+    "Hotspot NDCG": 0.7944662416642967
+  },
+  {
+    "pst_length_eps_frac": 0.15,
+    "Density Error": 0.12460823104106226,
+    "Transition Error": 0.39233118436010656,
+    "Spatial-Temporal Query Error": 0.48273389440173536,
+    "Pattern F1 Error": 0.4758,
+    "Kendall-tau Coefficient": 0.7396825396825397,
+    "Length Error": 0.13408339440383524,
+    "Trip Error": 0.25995864871736235,
+    "Hotspot NDCG": 0.7298355132070999
+  }
+]

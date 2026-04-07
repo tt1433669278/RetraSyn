@@ -1,0 +1,109 @@
+Warning: logging configuration file is not found in logger\logger_config.json.
+
+INFO:evaluation:Namespace(epsilon=1.0, grid_num=6, w=20, method='retrasyn_pst', dataset='tdrive', multiprocessing=False, phi=20, compare_methods='retrasyn,retrasyn_pst_balanced_len0p02,retrasyn_pst_balanced_len0p05,retrasyn_pst_balanced_len0p10,retrasyn_pst_balanced_len0p15', pst_profile='balanced', pst_report_rate=4.5, pst_explore_rate=1.6, pst_split_sigma=1.0, pst_confirm_gain=0.01, pst_length_eps_frac=0.02, pst_marginal_eps_frac=0.1, pst_explore_budget_ratio=0.45, pst_momentum_min_candidates=5, pst_consistency_mix=0.18, pst_length_max=96, pst_base_grid_num=6, pst_base_radius=1, pst_max_radius=3, pst_context_grid_num=6, pst_context_depth=3, pst_context_budget_ratio=0.24, pst_coarse_mix=0.34, ablation_output='', pst_projection_strength=2.6, pst_projection_feasible_floor=0.1, pst_speed_weight=0.45, pst_turn_weight=0.75, pst_accel_weight=0.85, pst_projection_density_gamma=1.35)
+INFO:evaluation:Spatial decomposition...
+INFO:evaluation:Experiment: Density
+INFO:evaluation:Experiment: Transition
+INFO:evaluation:Experiment: Spatial-Temporal Query Error...
+INFO:evaluation:Experiment: Pattern Errors
+INFO:evaluation:Experiment: Hotspot NDCG
+INFO:evaluation:Evaluating method: retrasyn
+INFO:evaluation:Evaluating method: retrasyn_pst_balanced_len0p02
+INFO:evaluation:Evaluating method: retrasyn_pst_balanced_len0p05
+INFO:evaluation:Evaluating method: retrasyn_pst_balanced_len0p10
+INFO:evaluation:Evaluating method: retrasyn_pst_balanced_len0p15
+INFO:evaluation:===== retrasyn =====
+INFO:evaluation:Density Error: 0.13549337655184693
+INFO:evaluation:Transition Error: 0.41044299496131365
+INFO:evaluation:Spatial-Temporal Query Error: 0.5097931591234822
+INFO:evaluation:Pattern F1 Error: 0.3892000000000001
+INFO:evaluation:Kendall-tau Coefficient: 0.6952380952380952
+INFO:evaluation:Length Error: 0.2027415849743443
+INFO:evaluation:Trip Error: 0.33622497995699163
+INFO:evaluation:Physical Violation Error: 1.3518062398531676
+INFO:evaluation:Hotspot NDCG: 0.4996913204617698
+INFO:evaluation:===== retrasyn_pst_balanced_len0p02 =====
+INFO:evaluation:Density Error: 0.17450571476334809
+INFO:evaluation:Transition Error: 0.41336478059830833
+INFO:evaluation:Spatial-Temporal Query Error: 0.48334526686556883
+INFO:evaluation:Pattern F1 Error: 0.46549999999999997
+INFO:evaluation:Kendall-tau Coefficient: 0.7936507936507936
+INFO:evaluation:Length Error: 0.12436494126752184
+INFO:evaluation:Trip Error: 0.26216105103655174
+INFO:evaluation:Physical Violation Error: 0.991042843210044
+INFO:evaluation:Hotspot NDCG: 0.4085189763664049
+INFO:evaluation:Ablation metadata: context_grid_num=6, context_ratio=1.0, length_eps=0.02, marginal_eps=0.1, motion_report_eps=0.36784, motion_explore_eps=0.30096, context_report_eps=0.11615999999999999, context_explore_eps=0.09504, projection_rejection_mass=0.33606338033281236, feasible_mass_ratio=0.6323603189324101, physical_violation_reduction=0.07739192711801929, adaptive_projection_strength=0.39225925061566275, adaptive_projection_floor=0.4176911040260345, candidate_hotspot_density=0.29811751826852445
+INFO:evaluation:===== retrasyn_pst_balanced_len0p05 =====
+INFO:evaluation:Density Error: 0.17526232083558801
+INFO:evaluation:Transition Error: 0.42347929747355634
+INFO:evaluation:Spatial-Temporal Query Error: 0.5347968852909848
+INFO:evaluation:Pattern F1 Error: 0.4455999999999999
+INFO:evaluation:Kendall-tau Coefficient: 0.6952380952380952
+INFO:evaluation:Length Error: 0.12704119597332023
+INFO:evaluation:Trip Error: 0.2625016470538931
+INFO:evaluation:Physical Violation Error: 1.0055416902451475
+INFO:evaluation:Hotspot NDCG: 0.375651138890901
+INFO:evaluation:Ablation metadata: context_grid_num=6, context_ratio=1.0, length_eps=0.05, marginal_eps=0.1, motion_report_eps=0.35529999999999995, motion_explore_eps=0.2907, context_report_eps=0.1122, context_explore_eps=0.09179999999999999, projection_rejection_mass=0.3376382628136682, feasible_mass_ratio=0.6256195393388913, physical_violation_reduction=0.07401380642266171, adaptive_projection_strength=0.3905285960909248, adaptive_projection_floor=0.4193067953592674, candidate_hotspot_density=0.30098985841645176
+INFO:evaluation:===== retrasyn_pst_balanced_len0p10 =====
+INFO:evaluation:Density Error: 0.17385782597956922
+INFO:evaluation:Transition Error: 0.41587036592998433
+INFO:evaluation:Spatial-Temporal Query Error: 0.5063042845493569
+INFO:evaluation:Pattern F1 Error: 0.46029999999999993
+INFO:evaluation:Kendall-tau Coefficient: 0.692063492063492
+INFO:evaluation:Length Error: 0.12619215387995011
+INFO:evaluation:Trip Error: 0.2647990997702894
+INFO:evaluation:Physical Violation Error: 0.9877100454213119
+INFO:evaluation:Hotspot NDCG: 0.4576061899566372
+INFO:evaluation:Ablation metadata: context_grid_num=6, context_ratio=1.0, length_eps=0.1, marginal_eps=0.1, motion_report_eps=0.33440000000000003, motion_explore_eps=0.27360000000000007, context_report_eps=0.1056, context_explore_eps=0.0864, projection_rejection_mass=0.3353936824732064, feasible_mass_ratio=0.6311412777705032, physical_violation_reduction=0.07665334824627201, adaptive_projection_strength=0.39117093641864403, adaptive_projection_floor=0.4188381544959963, candidate_hotspot_density=0.3001567191039903
+INFO:evaluation:===== retrasyn_pst_balanced_len0p15 =====
+INFO:evaluation:Density Error: 0.1732845998929237
+INFO:evaluation:Transition Error: 0.42068849697540317
+INFO:evaluation:Spatial-Temporal Query Error: 0.46350773231583275
+INFO:evaluation:Pattern F1 Error: 0.4544999999999999
+INFO:evaluation:Kendall-tau Coefficient: 0.7142857142857143
+INFO:evaluation:Length Error: 0.1247610960198128
+INFO:evaluation:Trip Error: 0.26643617690164034
+INFO:evaluation:Physical Violation Error: 1.0004776912659423
+INFO:evaluation:Hotspot NDCG: 0.41726391269045393
+INFO:evaluation:Ablation metadata: context_grid_num=6, context_ratio=1.0, length_eps=0.15, marginal_eps=0.1, motion_report_eps=0.3135, motion_explore_eps=0.2565, context_report_eps=0.09899999999999999, context_explore_eps=0.081, projection_rejection_mass=0.33665173706767615, feasible_mass_ratio=0.6268934849742295, physical_violation_reduction=0.07435918744769449, adaptive_projection_strength=0.3907604497257461, adaptive_projection_floor=0.4195033292213661, candidate_hotspot_density=0.30133925194909933
+INFO:evaluation:===== Comparison vs retrasyn =====
+INFO:evaluation:----- retrasyn_pst_balanced_len0p02 -----
+INFO:evaluation:Density Error delta: 0.03901233821150116
+INFO:evaluation:Transition Error delta: 0.0029217856369946893
+INFO:evaluation:Spatial-Temporal Query Error delta: -0.026447892257913386
+INFO:evaluation:Pattern F1 Error delta: 0.07629999999999987
+INFO:evaluation:Kendall-tau Coefficient delta: 0.0984126984126984
+INFO:evaluation:Length Error delta: -0.07837664370682246
+INFO:evaluation:Trip Error delta: -0.07406392892043989
+INFO:evaluation:Physical Violation Error delta: -0.3607633966431236
+INFO:evaluation:Hotspot NDCG delta: -0.0911723440953649
+INFO:evaluation:----- retrasyn_pst_balanced_len0p05 -----
+INFO:evaluation:Density Error delta: 0.03976894428374109
+INFO:evaluation:Transition Error delta: 0.013036302512242692
+INFO:evaluation:Spatial-Temporal Query Error delta: 0.02500372616750257
+INFO:evaluation:Pattern F1 Error delta: 0.056399999999999784
+INFO:evaluation:Kendall-tau Coefficient delta: 0.0
+INFO:evaluation:Length Error delta: -0.07570038900102408
+INFO:evaluation:Trip Error delta: -0.07372333290309852
+INFO:evaluation:Physical Violation Error delta: -0.3462645496080201
+INFO:evaluation:Hotspot NDCG delta: -0.12404018157086877
+INFO:evaluation:----- retrasyn_pst_balanced_len0p10 -----
+INFO:evaluation:Density Error delta: 0.0383644494277223
+INFO:evaluation:Transition Error delta: 0.005427370968670686
+INFO:evaluation:Spatial-Temporal Query Error delta: -0.003488874574125278
+INFO:evaluation:Pattern F1 Error delta: 0.07109999999999983
+INFO:evaluation:Kendall-tau Coefficient delta: -0.0031746031746031633
+INFO:evaluation:Length Error delta: -0.07654943109439419
+INFO:evaluation:Trip Error delta: -0.0714258801867022
+INFO:evaluation:Physical Violation Error delta: -0.3640961944318557
+INFO:evaluation:Hotspot NDCG delta: -0.04208513050513257
+INFO:evaluation:----- retrasyn_pst_balanced_len0p15 -----
+INFO:evaluation:Density Error delta: 0.03779122334107676
+INFO:evaluation:Transition Error delta: 0.010245502014089525
+INFO:evaluation:Spatial-Temporal Query Error delta: -0.046285426807649466
+INFO:evaluation:Pattern F1 Error delta: 0.0652999999999998
+INFO:evaluation:Kendall-tau Coefficient delta: 0.01904761904761909
+INFO:evaluation:Length Error delta: -0.0779804889545315
+INFO:evaluation:Trip Error delta: -0.06978880305535129
+INFO:evaluation:Physical Violation Error delta: -0.3513285485872253
+INFO:evaluation:Hotspot NDCG delta: -0.08242740777131585

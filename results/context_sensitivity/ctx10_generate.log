@@ -1,0 +1,35 @@
+Warning: logging configuration file is not found in logger\logger_config.json.
+
+INFO:RetraSyn:Namespace(epsilon=1.0, grid_num=10, w=20, method='retrasyn_pst', dataset='tdrive', multiprocessing=False, phi=20, compare_methods='', pst_profile='balanced', pst_report_rate=4.5, pst_explore_rate=1.6, pst_split_sigma=1.0, pst_confirm_gain=0.01, pst_length_eps_frac=0.02, pst_marginal_eps_frac=0.1, pst_explore_budget_ratio=0.45, pst_momentum_min_candidates=5, pst_consistency_mix=0.18, pst_length_max=96, pst_base_grid_num=6, pst_base_radius=1, pst_max_radius=3, pst_context_grid_num=10, pst_context_depth=3, pst_context_budget_ratio=0.24, pst_coarse_mix=0.34, ablation_output='', pst_projection_strength=0.6, pst_projection_feasible_floor=0.25, pst_speed_weight=0.45, pst_turn_weight=0.45, pst_accel_weight=0.55, pst_projection_density_gamma=1.35)
+INFO:RetraSyn:Reading dataset...
+INFO:RetraSyn:Spatial decomposition...
+INFO:RetraSyn:RetraSyn-PST...
+INFO:RetraSyn:100 timestamps processed, PST nodes=41, confirmed_nodes=39, broadcasted_nodes=41, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8491, coarse_entropy=0.9558, novelty=0.0083, report_weight=0.9338, explore_weight=0.0667, report_rate=0.3048, explore_rate=0.0838, report_users=367.4, explore_users=69.9
+INFO:RetraSyn:Projection stats: rejection_mass=0.2559, feasible_mass_ratio=0.7842, violation_reduction=0.0473, adaptive_strength=0.4008, adaptive_floor=0.4059, hotspot_density=0.2772, raw_violation=0.5710, projected_violation=0.5527, samples=500792
+INFO:RetraSyn:200 timestamps processed, PST nodes=46, confirmed_nodes=41, broadcasted_nodes=46, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8390, coarse_entropy=0.9570, novelty=0.0017, report_weight=0.9298, explore_weight=0.0537, report_rate=0.3036, explore_rate=0.0826, report_users=365.4, explore_users=68.9
+INFO:RetraSyn:Projection stats: rejection_mass=0.2622, feasible_mass_ratio=0.7736, violation_reduction=0.0435, adaptive_strength=0.3981, adaptive_floor=0.4086, hotspot_density=0.2819, raw_violation=0.5866, projected_violation=0.5687, samples=504538
+INFO:RetraSyn:300 timestamps processed, PST nodes=50, confirmed_nodes=46, broadcasted_nodes=50, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8276, coarse_entropy=0.9559, novelty=0.0025, report_weight=0.9323, explore_weight=0.0554, report_rate=0.3025, explore_rate=0.0822, report_users=260.3, explore_users=48.9
+INFO:RetraSyn:Projection stats: rejection_mass=0.2624, feasible_mass_ratio=0.7773, violation_reduction=0.0442, adaptive_strength=0.4006, adaptive_floor=0.4061, hotspot_density=0.2774, raw_violation=0.5833, projected_violation=0.5659, samples=417110
+INFO:RetraSyn:400 timestamps processed, PST nodes=51, confirmed_nodes=47, broadcasted_nodes=51, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8394, coarse_entropy=0.9560, novelty=0.0013, report_weight=0.9317, explore_weight=0.0527, report_rate=0.3037, explore_rate=0.0826, report_users=311.4, explore_users=58.6
+INFO:RetraSyn:Projection stats: rejection_mass=0.2641, feasible_mass_ratio=0.7707, violation_reduction=0.0426, adaptive_strength=0.3972, adaptive_floor=0.4096, hotspot_density=0.2837, raw_violation=0.5917, projected_violation=0.5734, samples=448837
+INFO:RetraSyn:500 timestamps processed, PST nodes=51, confirmed_nodes=50, broadcasted_nodes=51, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8334, coarse_entropy=0.9549, novelty=0.0007, report_weight=0.9321, explore_weight=0.0515, report_rate=0.3030, explore_rate=0.0822, report_users=294.0, explore_users=55.2
+INFO:RetraSyn:Projection stats: rejection_mass=0.2584, feasible_mass_ratio=0.7753, violation_reduction=0.0445, adaptive_strength=0.3952, adaptive_floor=0.4107, hotspot_density=0.2856, raw_violation=0.5801, projected_violation=0.5625, samples=437663
+INFO:RetraSyn:600 timestamps processed, PST nodes=51, confirmed_nodes=51, broadcasted_nodes=51, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8343, coarse_entropy=0.9554, novelty=0.0001, report_weight=0.9370, explore_weight=0.0502, report_rate=0.3034, explore_rate=0.0822, report_users=181.7, explore_users=33.9
+INFO:RetraSyn:Projection stats: rejection_mass=0.2676, feasible_mass_ratio=0.7653, violation_reduction=0.0408, adaptive_strength=0.3948, adaptive_floor=0.4109, hotspot_density=0.2861, raw_violation=0.5982, projected_violation=0.5812, samples=271332
+INFO:RetraSyn:700 timestamps processed, PST nodes=51, confirmed_nodes=51, broadcasted_nodes=51, new_nodes=0
+INFO:RetraSyn:Sampling stats: entropy=0.8607, coarse_entropy=0.9561, novelty=0.0000, report_weight=0.9469, explore_weight=0.0500, report_rate=0.3067, explore_rate=0.0833, report_users=130.4, explore_users=24.1
+INFO:RetraSyn:Projection stats: rejection_mass=0.2729, feasible_mass_ratio=0.7579, violation_reduction=0.0439, adaptive_strength=0.4051, adaptive_floor=0.4029, hotspot_density=0.2717, raw_violation=0.5975, projected_violation=0.5798, samples=211481
+INFO:RetraSyn:800 timestamps processed, PST nodes=52, confirmed_nodes=51, broadcasted_nodes=51, new_nodes=1
+INFO:RetraSyn:Sampling stats: entropy=0.8393, coarse_entropy=0.9544, novelty=0.0000, report_weight=0.9431, explore_weight=0.0500, report_rate=0.3042, explore_rate=0.0824, report_users=172.3, explore_users=32.1
+INFO:RetraSyn:Projection stats: rejection_mass=0.2652, feasible_mass_ratio=0.7704, violation_reduction=0.0447, adaptive_strength=0.3993, adaptive_floor=0.4077, hotspot_density=0.2804, raw_violation=0.5923, projected_violation=0.5745, samples=248294
+INFO:RetraSyn:Runtime breakdown:
+INFO:RetraSyn:  spatial_decomposition: 12.174s
+INFO:RetraSyn:  pst_update: 25.962s
+INFO:RetraSyn:  trajectory_synthesis: 246.200s
+INFO:RetraSyn:  write_file: 2.634s

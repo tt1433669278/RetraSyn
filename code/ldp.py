@@ -38,6 +38,16 @@ class OUE:
         self.aggregated_data += np.bincount(indices, minlength=self.d)
         self.n += len(indices)
 
+    def aggregate_count_vector(self, counts):
+        counts = np.asarray(counts, dtype=int)
+        if counts.size != self.d:
+            raise ValueError('Count vector dimension mismatch')
+        total = int(counts.sum())
+        if total <= 0:
+            return
+        self.aggregated_data += counts
+        self.n += total
+
     def adjust(self):
         # If y=0, Prob(y'=1)=q, Prob(y'=0)=1-q
         tmp_perturbed_1 = np.copy(self.aggregated_data)

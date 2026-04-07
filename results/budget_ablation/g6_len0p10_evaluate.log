@@ -1,0 +1,39 @@
+Warning: logging configuration file is not found in logger\logger_config.json.
+
+INFO:evaluation:Namespace(epsilon=1.0, grid_num=6, w=20, method='retrasyn_pst', dataset='tdrive', multiprocessing=False, phi=20, compare_methods='retrasyn,retrasyn_pst_balanced', pst_profile='balanced', pst_report_rate=2.25, pst_explore_rate=0.2, pst_split_sigma=1.5, pst_confirm_gain=0.03, pst_length_eps_frac=0.1, pst_marginal_eps_frac=0.2, pst_explore_budget_ratio=0.6, pst_momentum_min_candidates=4, pst_consistency_mix=0.55, pst_length_max=96)
+INFO:evaluation:Spatial decomposition...
+INFO:evaluation:Experiment: Density
+INFO:evaluation:Experiment: Transition
+INFO:evaluation:Experiment: Spatial-Temporal Query Error...
+INFO:evaluation:Experiment: Pattern Errors
+INFO:evaluation:Experiment: Hotspot NDCG
+INFO:evaluation:Evaluating method: retrasyn
+INFO:evaluation:Evaluating method: retrasyn_pst_balanced
+INFO:evaluation:===== retrasyn =====
+INFO:evaluation:Density Error: 0.13549337655184693
+INFO:evaluation:Transition Error: 0.41044299496131365
+INFO:evaluation:Spatial-Temporal Query Error: 0.5097931591234822
+INFO:evaluation:Pattern F1 Error: 0.3892000000000001
+INFO:evaluation:Kendall-tau Coefficient: 0.6952380952380952
+INFO:evaluation:Length Error: 0.2027415849743443
+INFO:evaluation:Trip Error: 0.33622497995699163
+INFO:evaluation:Hotspot NDCG: 0.4996913204617698
+INFO:evaluation:===== retrasyn_pst_balanced =====
+INFO:evaluation:Density Error: 0.1147391094307288
+INFO:evaluation:Transition Error: 0.3750438931979292
+INFO:evaluation:Spatial-Temporal Query Error: 0.4378079421119908
+INFO:evaluation:Pattern F1 Error: 0.4864
+INFO:evaluation:Kendall-tau Coefficient: 0.7904761904761904
+INFO:evaluation:Length Error: 0.1414237877610085
+INFO:evaluation:Trip Error: 0.2542949473427436
+INFO:evaluation:Hotspot NDCG: 0.7944662416642967
+INFO:evaluation:===== Comparison vs retrasyn =====
+INFO:evaluation:----- retrasyn_pst_balanced -----
+INFO:evaluation:Density Error delta: -0.020754267121118122
+INFO:evaluation:Transition Error delta: -0.035399101763384455
+INFO:evaluation:Spatial-Temporal Query Error delta: -0.07198521701149141
+INFO:evaluation:Pattern F1 Error delta: 0.0971999999999999
+INFO:evaluation:Kendall-tau Coefficient delta: 0.09523809523809523
+INFO:evaluation:Length Error delta: -0.0613177972133358
+INFO:evaluation:Trip Error delta: -0.08193003261424803
+INFO:evaluation:Hotspot NDCG delta: 0.2947749212025269

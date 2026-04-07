@@ -156,6 +156,27 @@ class Users:
             self.users[uid] = 2
         return sampled_users
 
+    def weighted_sample(self, p, weight_map=None):
+        available_users = self.available_users
+        sample_size = min(len(available_users), int(p * len(available_users)))
+        if sample_size <= 0 or not available_users:
+            return []
+
+        if not weight_map:
+            sampled_users = random.sample(available_users, sample_size)
+        else:
+            weights = np.asarray([max(float(weight_map.get(uid, 0.0)), 0.0) for uid in available_users], dtype=float)
+            total = weights.sum()
+            if total <= 1e-8:
+                sampled_users = random.sample(available_users, sample_size)
+            else:
+                sampled_ids = np.random.choice(len(available_users), size=sample_size, replace=False, p=weights / total)
+                sampled_users = [available_users[int(idx)] for idx in sampled_ids.tolist()]
+
+        for uid in sampled_users:
+            self.users[uid] = 2
+        return sampled_users
+
     def deactivate(self, uid):
         self.users[uid] = 0
 

@@ -108,14 +108,41 @@ class Pattern:
 
 
 def eval_st_query_error(orig_db, syn_db, queries: List[SquareQuery], sanity_bound=0.01, upt=34000):
+    def build_points_by_time(db, max_time):
+        buckets = [[] for _ in range(max_time)]
+        for traj in db:
+            for x, y, t in traj:
+                if 0 <= t < max_time:
+                    buckets[t].append((x, y))
+        return [np.asarray(points, dtype=float) if points else np.empty((0, 2), dtype=float) for points in buckets]
+
+    def count_query(points_by_time, query):
+        count = 0
+        for t in range(query.min_t, query.max_t + 1):
+            points = points_by_time[t]
+            if points.size == 0:
+                continue
+            mask = (
+                (points[:, 0] >= query.left_x)
+                & (points[:, 0] <= query.right_x)
+                & (points[:, 1] >= query.down_y)
+                & (points[:, 1] <= query.up_y)
+            )
+            count += int(np.count_nonzero(mask))
+        return count
+
+    max_time = max(query.max_t for query in queries) + 1
+    orig_points_by_time = build_points_by_time(orig_db, max_time)
+    syn_points_by_time = build_points_by_time(syn_db, max_time)
+
     actual_ans = list()
     syn_ans = list()
 
     average_total_points = upt * (queries[0].max_t - queries[0].min_t + 1)
 
     for q in queries:
-        actual_ans.append(q.point_query_t(orig_db))
-        syn_ans.append(q.point_query_t(syn_db))
+        actual_ans.append(count_query(orig_points_by_time, q))
+        syn_ans.append(count_query(syn_points_by_time, q))
 
     actual_ans = np.asarray(actual_ans)
     syn_ans = np.asarray(syn_ans)
@@ -129,28 +156,39 @@ def eval_st_query_error(orig_db, syn_db, queries: List[SquareQuery], sanity_boun
 
 
 def eval_jsd(true, release):
-    results = []
-    for i in range(len(true)):
-        results.append(utils.js_divergence(true[i], release[i]))
-    return np.mean(results)
+    true_arr = np.asarray(true, dtype=float)
+    release_arr = np.asarray(release, dtype=float)
+    avg_prob = (true_arr + release_arr) / 2
+    kl_true = np.log((true_arr + 1e-8) / (avg_prob + 1e-8)) * true_arr
+    kl_release = np.log((release_arr + 1e-8) / (avg_prob + 1e-8)) * release_arr
+    return np.mean(0.5 * np.sum(kl_true, axis=-1) + 0.5 * np.sum(kl_release, axis=-1))
 
 
 def mine_patterns(db: List[List[Tuple[Grid, int]]], min_time, max_time, min_size=2, max_size=5):
     pattern_dict = {}
-    for curr_size in range(min_size, max_size + 1):
-        if curr_size > max_time - min_time:
-            break
-        for traj in db:
-            for i in range(0, len(traj) - curr_size + 1):
-                if traj[i][1] < min_time or traj[i + curr_size - 1][1] > max_time:
+    max_pattern_size = min(max_size, max_time - min_time + 1)
+    for traj in db:
+        if len(traj) < min_size:
+            continue
+
+        start = 0
+        while start < len(traj) and traj[start][1] < min_time:
+            start += 1
+        end = len(traj)
+        while end > start and traj[end - 1][1] > max_time:
+            end -= 1
+        if end - start < min_size:
+            continue
+
+        indices = [g.linear_index for g, _ in traj[start:end]]
+        for curr_size in range(min_size, min(max_pattern_size, len(indices)) + 1):
+            limit = len(indices) - curr_size + 1
+            for i in range(limit):
+                pattern = indices[i:i + curr_size]
+                if curr_size > 2 and any(pattern[j] == pattern[j + 1] for j in range(curr_size - 1)):
                     continue
-                p = Pattern([g_t[0] for g_t in traj[i:i + curr_size]])
-                if not p.check_pattern():
-                    continue
-                try:
-                    pattern_dict[p] += 1
-                except KeyError:
-                    pattern_dict[p] = 1
+                pattern_key = tuple(pattern)
+                pattern_dict[pattern_key] = pattern_dict.get(pattern_key, 0) + 1
 
     return pattern_dict
 
@@ -166,9 +204,10 @@ def calculate_pattern_f1(orig_pattern,
     if not orig_top_k or not syn_top_k:
         return 0
 
+    orig_top_k_set = set(orig_top_k)
     count = 0
     for p1 in syn_top_k:
-        if p1 in orig_top_k:
+        if p1 in orig_top_k_set:
             count += 1
 
     precision = count / len(syn_top_k)
@@ -181,29 +220,33 @@ def get_grid_count(grid_db: List[List[Tuple[Grid, int]]], domain: List[Grid], ma
     """
     Return a list of grid counts for each timestamp
     """
-    domain_map = utils.list_to_dict(domain)
-    grid_counts = [np.zeros(len(domain)) for _ in range(max_time)]
+    grid_counts = np.zeros((max_time, len(domain)), dtype=float)
     for traj in grid_db:
         for (g, t) in traj:
             if t < min_time or t >= max_time:
                 continue
-            grid_counts[t][domain_map[g]] += 1
+            grid_counts[t][g.linear_index] += 1
 
     return grid_counts
 
 
 def get_transition_count(grid_db: List[List[Tuple[Grid, int]]], domain: List[Transition], max_time, min_time=0):
-    domain_map = utils.list_to_dict(domain)
-    trans_counts = [np.zeros(len(domain)) for _ in range(max_time - 1)]
+    grid_size = max(max(trans.g1.linear_index, trans.g2.linear_index) for trans in domain) + 1
+    transition_lookup = -np.ones((grid_size, grid_size), dtype=int)
+    for idx, trans in enumerate(domain):
+        transition_lookup[trans.g1.linear_index, trans.g2.linear_index] = idx
+
+    trans_counts = np.zeros((max_time - 1, len(domain)), dtype=float)
     for traj in grid_db:
         for i in range(len(traj) - 1):
             t = traj[i][1]
             if t < min_time or t >= max_time - 1:
                 continue
-            curr_grid = traj[i][0]
-            next_grid = traj[i + 1][0]
-            trans = Transition(curr_grid, next_grid)
-            trans_counts[t][domain_map[trans]] += 1
+            curr_index = traj[i][0].linear_index
+            next_index = traj[i + 1][0].linear_index
+            trans_index = transition_lookup[curr_index, next_index]
+            if trans_index >= 0:
+                trans_counts[t][trans_index] += 1
 
     return trans_counts
 
@@ -216,17 +259,16 @@ def eval_hotspot_ndcg(orig_counts, syn_counts, k=10):
 
     orig_density = orig_counts / orig_sum
     syn_density = syn_counts / syn_sum
-    sorted_orig = sorted(enumerate(orig_density), key=lambda x: x[1], reverse=True)
-    sorted_syn = sorted(enumerate(syn_density), key=lambda x: x[1], reverse=True)
-
-    orig_top_k = [x[0] for x in sorted_orig][:k]
-    syn_top_k = [x[0] for x in sorted_syn][:k]
+    orig_top_k = np.argsort(-orig_density)[:k]
+    syn_top_k = np.argsort(-syn_density)[:k]
+    orig_rank = {index: rank + 1 for rank, index in enumerate(orig_top_k)}
 
     r = np.zeros(k)
 
     for i, p1 in enumerate(syn_top_k):
-        if p1 in orig_top_k:
-            r[i] = 1 / (orig_top_k.index(p1) + 1)
+        rank = orig_rank.get(int(p1))
+        if rank is not None:
+            r[i] = 1 / rank
 
     idcg = np.sum((np.ones(k) / np.arange(1, k + 1)) * 1. / np.log2(np.arange(2, k + 2)))
     dcg = np.sum(r * 1. / np.log2(np.arange(2, k + 2)))
@@ -251,20 +293,12 @@ def calculate_coverage_kendall_tau(orig_db: List[List[Tuple[Grid, int]]],
         for index in passed:
             syn_counts[index] += 1
 
-    concordant_pairs = 0
-    reversed_pairs = 0
-    for i in range(grid_map.size):
-        for j in range(i + 1, grid_map.size):
-            if actual_counts[i] > actual_counts[j]:
-                if syn_counts[i] > syn_counts[j]:
-                    concordant_pairs += 1
-                else:
-                    reversed_pairs += 1
-            if actual_counts[i] < actual_counts[j]:
-                if syn_counts[i] < syn_counts[j]:
-                    concordant_pairs += 1
-                else:
-                    reversed_pairs += 1
+    actual_diff = actual_counts[:, None] - actual_counts[None, :]
+    syn_diff = syn_counts[:, None] - syn_counts[None, :]
+    upper_idx = np.triu_indices(grid_map.size, k=1)
+    pair_products = actual_diff[upper_idx] * syn_diff[upper_idx]
+    concordant_pairs = np.count_nonzero(pair_products > 0)
+    reversed_pairs = np.count_nonzero(pair_products < 0)
 
     denominator = grid_map.size * (grid_map.size - 1) / 2
     return (concordant_pairs - reversed_pairs) / denominator
@@ -286,10 +320,12 @@ def calculate_length_error(orig_db: List[List[Tuple[float, float, int]]],
     bins = np.linspace(min_length, max_length, bucket_num + 1)
     orig_count, _ = np.histogram(orig_length, bins=bins)
     syn_count, _ = np.histogram(syn_length, bins=bins)
+    orig_count = orig_count.astype(float)
+    syn_count = syn_count.astype(float)
 
     # Normalization
-    orig_count /= np.sum(orig_count)
-    syn_count /= np.sum(syn_count)
+    orig_count /= (np.sum(orig_count) + 1e-10)
+    syn_count /= (np.sum(syn_count) + 1e-10)
 
     return utils.js_divergence(orig_count, syn_count)
 
@@ -300,10 +336,9 @@ def get_trip_distribution(grid_db: List[List[Tuple[Grid, int]]], grid_map: GridM
     for g_t in grid_db:
         if not g_t:
             continue
-        start = g_t[0][0]
-        end = g_t[-1][0]
-
-        index = utils.pair_grid_index_map_func((start, end), grid_map)
+        start = g_t[0][0].linear_index
+        end = g_t[-1][0].linear_index
+        index = start * grid_map.size + end
         dist[index] += 1
 
     return dist
@@ -321,3 +356,55 @@ def calculate_trip_error(orig_db: List[List[Tuple[Grid, int]]],
     syn_trip /= syn_trip.sum()
 
     return utils.js_divergence(orig_trip, syn_trip)
+
+
+def adaptive_radius_from_grid(grid_n: int, base_grid_num=6, base_radius=1, max_radius=3):
+    scaled_radius = math.ceil(grid_n * base_radius / max(base_grid_num, 1))
+    return max(base_radius, min(max_radius, int(scaled_radius)))
+
+
+def calculate_physical_violation(grid_db: List[List[Tuple[Grid, int]]],
+                                 grid_map: GridMap,
+                                 base_grid_num=6,
+                                 base_radius=1,
+                                 max_radius=3):
+    radius = max(1.0, float(adaptive_radius_from_grid(grid_map.n, base_grid_num, base_radius, max_radius)))
+    violation_sum = 0.0
+    step_count = 0
+
+    for traj in grid_db:
+        if len(traj) < 2:
+            continue
+
+        steps = []
+        for i in range(len(traj) - 1):
+            g1 = traj[i][0]
+            g2 = traj[i + 1][0]
+            steps.append(np.asarray([g2.index[0] - g1.index[0], g2.index[1] - g1.index[1]], dtype=float))
+
+        prev_step = np.zeros(2, dtype=float)
+        prev_prev_step = np.zeros(2, dtype=float)
+        for step in steps:
+            speed = float(np.sqrt(np.sum(step * step)))
+            prev_speed = float(np.sqrt(np.sum(prev_step * prev_step)))
+            prev_accel = prev_step - prev_prev_step
+            accel = step - prev_step
+            jerk = accel - prev_accel
+
+            speed_dev = abs(speed - prev_speed) / radius
+            if speed > 1e-8 and prev_speed > 1e-8:
+                cosine = np.clip(float(np.dot(step, prev_step) / max(speed * prev_speed, 1e-8)), -1.0, 1.0)
+                turn_penalty = 0.5 * (1.0 - cosine)
+            else:
+                turn_penalty = 0.0
+            accel_penalty = 0.7 * (float(np.sqrt(np.sum(accel * accel))) / max(radius, prev_speed + 1.0))
+            accel_penalty += 0.3 * (float(np.sqrt(np.sum(jerk * jerk))) / max(radius, prev_speed + 1.0))
+
+            violation_sum += 0.45 * speed_dev + 0.75 * turn_penalty + 0.85 * accel_penalty
+            step_count += 1
+            prev_prev_step = prev_step
+            prev_step = step
+
+    if step_count <= 0:
+        return 0.0
+    return violation_sum / step_count
